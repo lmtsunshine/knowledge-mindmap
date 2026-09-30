@@ -1,6 +1,6 @@
 # knowledge-mindmap
 
-个人知识图谱仓库：从 Agent 到芯片，按领域沉淀公开技术知识。
+个人知识图谱仓库：从 Agent 请求到芯片执行，按一条竖栈沉淀公开技术知识。
 
 ## 红线：禁止任何公司信息
 
@@ -21,39 +21,29 @@
 
 ## 目录
 
-- `maps/`：领域总览导图
-- `domains/`：各领域正文与公开资料笔记
+- `maps/`：竖栈总览导图
+- `domains/`：各层正文与公开资料笔记
 
-### Agent 侧
+阅读顺序即目录编号顺序：
 
-| 目录 | 领域 |
+| 目录 | 层 |
 | --- | --- |
 | `domains/01-agent-business` | Agent 业务使用 |
-| `domains/02-agent-system` | Agent 系统（含工具、记忆、调模型） |
-
-### 模型服务侧
-
-| 目录 | 领域 |
-| --- | --- |
+| `domains/02-agent-system` | Agent 系统 |
 | `domains/03-inference-api` | 推理服务接入 |
-| `domains/04-inference-orchestration` | 推理服务编排 |
-| `domains/05-inference-engine` | 推理引擎（含 vLLM） |
-| `domains/06-model-parallel-comm` | 模型并行与集合通信 |
-| `domains/07-kernels-quantization` | 算子与量化 |
-| `domains/08-device-runtime` | 设备运行时 |
-| `domains/09-gpu-hardware` | GPU 硬件 |
-
-### 基础设施侧
-
-| 目录 | 领域 |
-| --- | --- |
-| `domains/10-container-startup` | 容器与启动加速 |
-| `domains/11-hpc-network` | 高性能网络 |
-| `domains/12-hpc-storage` | 高性能存储 |
-| `domains/13-cluster-management` | 集群管理 |
+| `domains/04-cluster-management` | 集群管理 |
+| `domains/05-container-startup` | 容器与启动加速 |
+| `domains/06-hpc-storage` | 高性能存储 |
+| `domains/07-inference-orchestration` | 推理服务编排 |
+| `domains/08-inference-engine` | 推理引擎（含 vLLM） |
+| `domains/09-model-parallel-comm` | 模型并行与集合通信 |
+| `domains/10-hpc-network` | 高性能网络 |
+| `domains/11-kernels-quantization` | 算子与量化 |
+| `domains/12-device-runtime` | 设备运行时 |
+| `domains/13-gpu-hardware` | GPU 硬件 |
 
 ## 约定
 
 - 只收互联网公开资料
-- 导图按领域分层；请求路径只用于发现边界，不写成步骤说明书
-- 需要 Markmap 时自行打开 `maps/` 下文件；不要默认弹出预览页
+- 总览按请求下落路径顺着排；集群 / 容器 / 存储 / 网络插在挡住路径的位置
+- 需要 Markmap 时自行打开 `maps/` 下文件；改完只重新生成 HTML，不自动打开
