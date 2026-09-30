@@ -32,18 +32,19 @@
 | `domains/02-agent-system` | Agent 系统 |
 | `domains/03-inference-api` | 推理服务接入 |
 | `domains/04-cluster-management` | 集群管理 |
-| `domains/05-container-startup` | 容器与启动加速 |
-| `domains/06-hpc-storage` | 高性能存储 |
-| `domains/07-inference-orchestration` | 推理服务编排 |
-| `domains/08-inference-engine` | 推理引擎（含 vLLM） |
-| `domains/09-model-parallel-comm` | 模型并行与集合通信 |
-| `domains/10-hpc-network` | 高性能网络 |
-| `domains/11-kernels-quantization` | 算子与量化 |
-| `domains/12-device-runtime` | 设备运行时 |
-| `domains/13-gpu-hardware` | GPU 硬件 |
+| `domains/05-base-environment` | 基础环境（OS / 驱动 / 容器镜像） |
+| `domains/06-container-startup` | 容器与启动加速 |
+| `domains/07-hpc-storage` | 高性能存储 |
+| `domains/08-inference-orchestration` | 推理服务编排 |
+| `domains/09-inference-engine` | 推理引擎（含 vLLM） |
+| `domains/10-model-parallel-comm` | 模型并行与集合通信 |
+| `domains/11-hpc-network` | 高性能网络 |
+| `domains/12-kernels-quantization` | 算子与量化 |
+| `domains/13-device-runtime` | 设备运行时 |
+| `domains/14-gpu-hardware` | GPU 硬件 |
 
 ## 约定
 
 - 只收互联网公开资料
-- 总览按请求下落路径顺着排；集群 / 容器 / 存储 / 网络插在挡住路径的位置
+- 总览按请求下落路径顺着排；集群 / 基础环境 / 容器 / 存储 / 网络插在挡住路径的位置
 - 需要 Markmap 时自行打开 `maps/` 下文件；改完只重新生成 HTML，不自动打开

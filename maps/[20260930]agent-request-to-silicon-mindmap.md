@@ -32,26 +32,34 @@
 - 节点与故障
 - 目录：`domains/04-cluster-management`
 
+## 基础环境
+
+- OS 镜像与节点初始化
+- GPU 驱动 / 主机侧依赖
+- 容器基础镜像与业务镜像
+- 镜像构建与分发基线
+- 目录：`domains/05-base-environment`
+
 ## 容器与启动加速
 
 - 镜像快照 / 懒加载
 - 容器启动加速
 - warmup
-- 目录：`domains/05-container-startup`
+- 目录：`domains/06-container-startup`
 
 ## 高性能存储
 
 - 权重 / 镜像 / checkpoint 加载
 - NVMe / 并行 FS / 缓存
 - KV offload
-- 目录：`domains/06-hpc-storage`
+- 目录：`domains/07-hpc-storage`
 
 ## 推理服务编排
 
 - 副本与扩缩
 - Prefill / Decode 池与路由
 - 前缀 / LoRA 亲和
-- 目录：`domains/07-inference-orchestration`
+- 目录：`domains/08-inference-orchestration`
 
 ## 推理引擎
 
@@ -59,37 +67,37 @@
 - admission / continuous batching
 - KV cache / prefix cache
 - sampling / 流式输出
-- 目录：`domains/08-inference-engine`
+- 目录：`domains/09-inference-engine`
 
 ## 模型并行与集合通信
 
 - TP / PP / EP / DP
 - NCCL
-- 目录：`domains/09-model-parallel-comm`
+- 目录：`domains/10-model-parallel-comm`
 
 ## 高性能网络
 
 - NVLink / NVSwitch
 - IB / RoCE / RDMA
 - P/D 间 KV transfer 网络
-- 目录：`domains/10-hpc-network`
+- 目录：`domains/11-hpc-network`
 
 ## 算子与量化
 
 - Attention / GEMM / MoE kernel
 - FP8 / FP4 / 融合
-- 目录：`domains/11-kernels-quantization`
+- 目录：`domains/12-kernels-quantization`
 
 ## 设备运行时
 
 - CUDA / ROCm
 - CUDA Graph
 - 分配器
-- 目录：`domains/12-device-runtime`
+- 目录：`domains/13-device-runtime`
 
 ## GPU 硬件
 
 - SM / Tensor Core
 - HBM
 - 片间互联能力
-- 目录：`domains/13-gpu-hardware`
+- 目录：`domains/14-gpu-hardware`
