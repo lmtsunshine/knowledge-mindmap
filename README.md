@@ -19,10 +19,17 @@
 
 误写入时必须立刻停止后续提交，从工作区与 git 历史中清除，确认远程无残留；涉及凭证则立即轮换，并按公司安全流程上报。
 
+## 预览
+
+- 离线页（浏览器直接打开）：[`preview/index.html`](preview/index.html)
+- 在线预览：https://htmlpreview.github.io/?https://raw.githubusercontent.com/lmtsunshine/knowledge-mindmap/cursor/personal-knowledge-mindmap-ae5c/preview/index.html
+- 改完 `maps/` 后更新预览（不自动打开浏览器）：`./scripts/preview.sh`
+
 ## 目录
 
 - `maps/`：竖栈总览导图
 - `domains/`：各层正文与公开资料笔记
+- `preview/`：Markmap 离线 HTML
 
 阅读顺序即目录编号顺序：
 
@@ -52,5 +59,5 @@
 
 - 只收互联网公开资料
 - 总览按请求下落路径顺着排
-- 需要 Markmap 时自行打开 `maps/` 下文件；改完只重新生成 HTML，不自动打开
+- 需要 Markmap 时打开 `preview/index.html`，或直接读 `maps/`；改完只跑 `./scripts/preview.sh` 重新生成 HTML，不自动打开
 - **本仓库**未经维护者明确允许，禁止 `git push`；本地 commit 可以。其他仓库不受此条约束
