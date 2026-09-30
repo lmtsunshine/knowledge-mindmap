@@ -22,8 +22,19 @@
 ## 预览
 
 - 离线页（浏览器直接打开）：[`preview/index.html`](preview/index.html)
-- 在线预览：https://htmlpreview.github.io/?https://raw.githubusercontent.com/lmtsunshine/knowledge-mindmap/cursor/personal-knowledge-mindmap-ae5c/preview/index.html
+- GitHub Pages：https://lmtsunshine.github.io/knowledge-mindmap/
+- 临时在线页（无需开通 Pages）：https://htmlpreview.github.io/?https://raw.githubusercontent.com/lmtsunshine/knowledge-mindmap/main/preview/index.html
 - 改完 `maps/` 后更新预览（不自动打开浏览器）：`./scripts/preview.sh`
+
+### 首次开通 GitHub Pages（只需一次）
+
+仓库权限令牌无法代开 Pages，需要仓库所有者在 GitHub 网页操作：
+
+1. 打开 https://github.com/lmtsunshine/knowledge-mindmap/settings/pages
+2. **Build and deployment → Source** 选其一：
+   - **Deploy from a branch**：Branch = `gh-pages`，Folder = `/ (root)`，Save  
+   - 或 **GitHub Actions**，然后到 Actions 里重跑 `Deploy Markmap preview`
+3. 等 1～2 分钟再访问 https://lmtsunshine.github.io/knowledge-mindmap/
 
 ## 目录
 
