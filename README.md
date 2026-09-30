@@ -1,6 +1,6 @@
 # knowledge-mindmap
 
-个人知识图谱仓库，用于整理从 Agent 应用到 GPU / 集群底座的公开技术知识结构。
+个人知识图谱仓库：从 Agent 到芯片，按领域沉淀公开技术知识。
 
 ## 红线：禁止任何公司信息
 
@@ -19,16 +19,41 @@
 
 误写入时必须立刻停止后续提交，从工作区与 git 历史中清除，确认远程无残留；涉及凭证则立即轮换，并按公司安全流程上报。
 
-## 内容范围
+## 目录
 
-- 来源限于互联网公开资料、开源项目文档、公开论文与公开技术文章
-- 产出形式以 Markmap 思维导图等可版本化文本为主
-- 目标是建立可检索、可迭代的个人知识分层，不是公司内部知识库镜像
+- `maps/`：领域总览导图
+- `domains/`：各领域正文与公开资料笔记
 
-## 使用方式
+### Agent 侧
 
-思维导图为 Markdown 源文件，可用 Markmap 预览：
+| 目录 | 领域 |
+| --- | --- |
+| `domains/01-agent-business` | Agent 业务使用 |
+| `domains/02-agent-system` | Agent 系统（含工具、记忆、调模型） |
 
-1. 安装扩展 `gera2ld.markmap-vscode`
-2. 打开 `*.md` → `Cmd+Shift+P` → **Markmap: Open as markmap**
-3. 或：`npx markmap-cli "文件路径" -o /tmp/mindmap.html && open /tmp/mindmap.html`
+### 模型服务侧
+
+| 目录 | 领域 |
+| --- | --- |
+| `domains/03-inference-api` | 推理服务接入 |
+| `domains/04-inference-orchestration` | 推理服务编排 |
+| `domains/05-inference-engine` | 推理引擎（含 vLLM） |
+| `domains/06-model-parallel-comm` | 模型并行与集合通信 |
+| `domains/07-kernels-quantization` | 算子与量化 |
+| `domains/08-device-runtime` | 设备运行时 |
+| `domains/09-gpu-hardware` | GPU 硬件 |
+
+### 基础设施侧
+
+| 目录 | 领域 |
+| --- | --- |
+| `domains/10-container-startup` | 容器与启动加速 |
+| `domains/11-hpc-network` | 高性能网络 |
+| `domains/12-hpc-storage` | 高性能存储 |
+| `domains/13-cluster-management` | 集群管理 |
+
+## 约定
+
+- 只收互联网公开资料
+- 导图按领域分层；请求路径只用于发现边界，不写成步骤说明书
+- 需要 Markmap 时自行打开 `maps/` 下文件；不要默认弹出预览页
