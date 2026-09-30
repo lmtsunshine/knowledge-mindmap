@@ -3,385 +3,423 @@
 > Markmap 预览：
 > 1. 装扩展 `gera2ld.markmap-vscode`
 > 2. 打开本文件 → `Cmd+Shift+P` → **Markmap: Open as markmap**
-> 3. 或命令行：`npx markmap-cli "本文件路径" -o /tmp/mindmap.html && open /tmp/mindmap.html`
->
-> 分层原则：业务与 Agent 落地只占两层；工具与模型接入并入 Agent；服务端从「模型如何被提供」起细拆。
+> 3. 或：`npx markmap-cli "本文件路径" -o /tmp/mindmap.html && open /tmp/mindmap.html`
 >
 > 红线：仅互联网公开知识，禁止任何公司信息。
 
-## 建设原则
+## 怎么读这张图
 
-### 分界
+### 上两层是使用侧
 
-- 左：谁用 Agent、Agent 如何落地
-- 右：模型服务如何在服务端被提供
+- 业务使用 Agent
+- Agent 如何落地
+- Agent 对外只发出 ModelRequest
 
-### 一层一页
+### 下面全是服务端
 
-- 边界与非目标
-- 向上接口
-- 向下依赖
-- 黄金指标
+- 按一次请求从外到内穿过的路径排层
+- 每层只回答一个问题
+- 层与层是上下游，不是并列功能清单
 
-### 因果按层下落
+### 服务端路径一句话
 
-- 上层现象换下层语言
-- 禁止跨层混写词条
+1. 请求如何被接纳与计量
+2. 跑在哪些引擎实例上
+3. 进 Prefill 池还是 Decode 池
+4. 单个引擎本步如何组 batch
+5. 序列状态 KV 如何占显存
+6. 本步计算图跑哪些算子
+7. 一个副本内部如何切多卡
+8. 若 P/D 分离，KV 如何搬到另一池
+9. CUDA 等运行时如何提交执行
+10. 落在什么 GPU 硬件上
+11. 机器处在什么集群与物理约束里
 
 ## 业务使用 Agent
 
-### 决定什么
+### 本层只回答
 
-- 解决什么任务
-- 成功标准是什么
-- 何时必须人介入
+- 用 Agent 解决什么业务问题
 
-### 知识对象
+### 管什么
 
-- 场景卡
-- 验收标准
+- 场景与成功标准
 - 人机门禁
 - 失败与回退预期
 
-### 非目标
+### 不管什么
 
-- 不展开编排框架细节
-- 不展开推理与 GPU 实现
+- Agent 内部怎么实现
+- 模型在哪台机器上跑
 
 ## Agent 如何落地
 
-### Agent 形态
+### 本层只回答
 
-- 单 Agent
-- 多 Agent
-- 固定工作流
-- 形态服务于场景，不是知识主干
+- 怎样把业务诉求变成对模型服务的一次次调用
 
-### 工具作为 Agent 能力的一部分
+### 管什么
 
-- Tool schema
-- MCP / Skill
-- 幂等与副作用分级
-- 调用审计
+- Agent 形态：单 Agent / 多 Agent / 工作流
+- 工具：Tool schema、MCP、Skill、副作用
+- 知识：上下文、检索、长期记忆
+- 护栏：权限、Guardrail、Eval
+- 模型调用：选模、路由、流式、降级
 
-### 知识与记忆作为 Agent 能力的一部分
+### 不管什么
 
-- 工作上下文
-- 检索 / RAG
-- 长期记忆
-- 检索质量优先于向量库选型
+- 引擎怎么 batch
+- GPU 怎么切分
+- 集群怎么调度
 
-### 护栏与评测作为 Agent 能力的一部分
+### 向下交出的唯一对象
 
-- 权限与合规
-- Guardrail
-- Eval 集
+- ModelRequest
+- 附带：上下文长度、是否流式、是否工具调用密集
 
-### 模型调用作为 Agent 能力的一部分
+## 服务接入
 
-- 模型选择与路由
-- reasoning / 快模型
-- 降级与升级
-- API / 流式 / 会话语义
-- 对服务端只表现为一次 ModelRequest
+### 本层只回答
 
-### 本层对外接口
+- 这个 ModelRequest 能不能进系统、记谁的账、打到哪类服务
 
-- 发出的是模型请求与工具副作用
-- 不拥有 GPU forward
-- 不拥有舰队拓扑
+### 管什么
 
-## 模型服务如何提供
+- 鉴权与多租户
+- 限流与优先级
+- token 计量与计费
+- 逻辑模型名到服务入口的映射
 
-### 请求进入服务端之后
+### 不管什么
 
-- 多租户与限流
-- 计量计费
-- 逻辑模型到物理舰队的映射
+- 后面有几份副本
+- Prefill / Decode 怎么拆
+- 显存怎么分页
 
-### 推理舰队
+### 向下交出
 
-#### 放置与副本
+- 已接纳的推理请求
+- 租户与 SLA 标签
 
-- 模型到节点到 GPU
-- 副本数
-- 滚动升级
+## 部署拓扑
 
-#### 弹性与故障
+### 本层只回答
 
-- 按队列 / 利用率扩缩
-- 权重加载带宽
-- 实例摘除与回退
+- 为了提供该模型，世界上跑着哪些引擎实例、各在哪
 
-#### 本层指标
+### 管什么
 
-- 副本健康
-- 扩缩事件
-- 放置约束违反
+- 副本集合
+- 放置：节点、GPU、亲和与污点
+- 扩缩与滚动升级
+- 故障摘除
 
-### Prefill / Decode 与路由
+### 不管什么
 
-#### 角色池
+- 请求进 Prefill 还是 Decode
+- 单实例内部如何调度 step
+- kernel 怎么写
 
-- Prefill 算力密集
-- Decode 带宽密集
-- 两池比例独立扩缩
+### 向下交出
 
-#### 请求路由
+- 可路由的 EngineReplica 集合
 
-- 队列深度
-- 前缀亲和
-- LoRA 亲和
+## 角色路由
 
-#### 本层指标
+### 本层只回答
 
-- 各角色队列长度
-- 亲和命中率
-- P 与 D 配比
+- 这条请求此刻由哪类角色实例处理
 
-### 引擎调度
+### 管什么
 
-#### Admission
+- Prefill 池与 Decode 池的划分
+- 池间比例
+- 按队列、前缀、LoRA 的路由
+- 是否启用 P/D 分离
 
-- 显存水位
-- 并发上限
-- 优先级拒入
+### 不管什么
 
-#### Continuous batching
+- 单引擎里 batch 怎么排
+- KV block 怎么分配
+- 跨机 KV 字节怎么传（那是更下层）
 
-- 逐步重排
-- token budget
-- chunked prefill 保 TPOT
+### 关键约束
 
-#### Host 与 Device 重叠
+- Prefill：算力密集，影响 TTFT
+- Decode：带宽密集，影响 TPOT
+- 同池混跑会互相干扰；分池要付传输成本
 
-- EngineCore 独立进程
-- Overlap Scheduler
-- Speculative Decoding
+### 向下交出
 
-#### 本层指标
+- 打到具体角色实例的请求
+
+## 引擎批调度
+
+### 本层只回答
+
+- 在一个引擎实例内，当前 step 让哪些序列一起算
+
+### 管什么
+
+- Admission：显存与并发门槛
+- Continuous batching：逐步重排
+- Chunked prefill：长提示切块，减少饿死 decode
+- Speculative decoding：草稿与校验
+- Host / Device 重叠：减少 CPU 卡住 GPU
+
+### 不管什么
+
+- KV 物理布局细节可下沉，但调度要消费其容量信号
+- 不算具体 Attention kernel
+- 不管多卡集合通信实现
+
+### 本层指标
 
 - TTFT
-- TPOT / ITL
-- batch size 分布
-- 抢占次数
+- TPOT
+- 有效 batch size
+- 抢占与拒绝次数
 
-### KV 与会话状态
+### 向下交出
 
-#### PagedAttention
+- 本 step 的 batched forward 任务
 
-- block table
-- 按需分配
-- 降碎片
+## KV 管理
 
-#### 复用
+### 本层只回答
 
-- prefix cache
-- copy-on-write
-- 系统提示共享
+- 序列的注意力状态在显存里如何存放、复用、回收
 
-#### 显存预算
+### 管什么
 
-- 权重
-- KV
-- activation
-- workspace
+- PagedAttention / block table
+- 按需分配，降低碎片
+- prefix cache 与 copy-on-write
+- 抢占时释放与重建策略
+- 权重 / KV / activation / workspace 的预算拆分
 
-#### 本层指标
+### 不管什么
+
+- 本 step 选哪些请求进 batch
+- Attention 用哪种 kernel 实现
+- 跨实例如何传 KV
+
+### 本层指标
 
 - KV 占用
 - 碎片率
 - prefix hit rate
 
-### 模型执行与算子
+### 向下交出
 
-#### Attention
+- 可被算子寻址的 KV 视图
 
-- FlashAttention
-- Paged Attention kernel
-- MLA 等变体
+## 计算图与算子
 
-#### 计算主体
+### 本层只回答
 
-- GEMM / MLP
-- MoE 路由与专家
-- 多模态 encoder
+- 一次 forward 具体算哪些层、用哪些内核与数值精度
 
-#### 数值与融合
+### 管什么
 
-- FP16 / BF16 / FP8 / FP4
-- KV quant
-- kernel fusion
+- Transformer / MoE / 多模态结构
+- Attention、GEMM、专家路由等算子
+- 量化：FP16 / BF16 / FP8 / FP4、KV quant
+- kernel fusion 与编译路径
 
-#### 本层知识产物
+### 不管什么
+
+- 请求级调度
+- 集群放置
+- CUDA Graph 捕获策略可与运行时交界，但算子定义在本层
+
+### 本层产物
 
 - 显存拆分账
-- prefill / decode 算力画像
+- Prefill / Decode 各自瓶颈画像
 
-### 模型并行
+### 向下交出
 
-#### 切分方式
+- 需要在设备上执行的 kernel 序列
+- 若多卡：带并行切分意图的计算图
 
-- TP 层内切 高频 AllReduce
-- PP 按层切 管线气泡
-- EP 专家分布 AllToAll
-- DP 副本分流扩吞吐
+## 卡间并行
 
-#### 选型约束
+### 本层只回答
 
-- 单机多卡优先 TP
-- 放不进单机再 PP
+- 一个引擎副本内部，模型如何切到多张 GPU 上一起算
+
+### 管什么
+
+- TP：层内切，高频 AllReduce
+- PP：按层切，关注气泡
+- EP：专家并行，AllToAll
+- DP：多副本分流，扩吞吐
+
+### 不管什么
+
+- Prefill 池与 Decode 池之间的 KV 搬运
+- 集群里有多少副本
+- HBM 物理规格本身
+
+### 选型直觉
+
+- 单机多卡先 TP
+- 单机放不下再 PP
 - 大 MoE 才上 EP
 
-#### 本层指标
+### 向下交出
 
-- 集合通信带宽与延迟
-- 气泡时间
+- 每张卡上的局部计算与集合通信计划
 
-### 跨实例状态搬运
+## 实例间传输
 
-#### KV transfer
+### 本层只回答
 
-- Prefill 到 Decode
-- NIXL / UCX / RDMA
-- 同机 CUDA IPC
+- 当 Prefill 与 Decode 不在同一实例时，状态如何搬走
 
-#### Reshard
+### 管什么
 
-- 跨 TP / PP 布局重排
-- 传输带宽预算
+- KV transfer：NIXL / UCX / RDMA / 同机 IPC
+- 跨 TP/PP 布局的 reshard
+- 传输与计算重叠
 
-#### 本层指标
+### 不管什么
 
-- KV transfer GB/s
+- 不决定要不要分 P/D（那是角色路由）
+- 不管理单实例内 block 分配器
+- 不是 TP 的 AllReduce
+
+### 何时存在
+
+- 仅 P/D 分离或同类跨实例状态交接时
+- 同实例混跑则本层可空
+
+### 本层指标
+
+- 传输带宽
 - 传输尾延迟
-- decode 等 KV 空转
+- Decode 等 KV 的空转
 
-### 设备运行时
+## 设备运行时
 
-#### 执行模型
+### 本层只回答
 
-- Stream / Event
-- CUDA Graph 捕获 decode
-- batch padding 对齐
+- kernel 如何被设备执行、内存如何被运行时管理
 
-#### 内存
+### 管什么
 
-- device / pinned / IPC
-- caching allocator
-- 长跑碎片 OOM
+- CUDA / ROCm Stream 与 Event
+- CUDA Graph 捕获与回放
+- caching allocator 与碎片
+- 驱动与运行时版本矩阵
 
-#### 版本基线
+### 不管什么
 
-- 驱动
-- CUDA / ROCm
-- Fabric Manager
+- 模型有哪些层
+- 集群网络拓扑
+- 业务租户是谁
 
-#### 本层指标
+### 本层指标
 
 - graph hit rate
 - SM / DRAM 利用率
-- allocator 碎片
+- allocator 碎片与 OOM
 
-### 加速器硬件
+## GPU 硬件
 
-#### 硅片
+### 本层只回答
 
-- SM
-- Tensor Core 代际
-- 精度能力 FP8 / FP4
+- 单卡 / 单机加速器提供什么物理能力上限
 
-#### 存储与互联
+### 管什么
 
+- SM 与 Tensor Core 代际
+- 支持的精度
 - HBM 容量与带宽
-- NVLink 域
-- PCIe only 上限
+- NVLink / PCIe 域
 
-#### 对上层约束语言
+### 不管什么
 
-- 同容量不同代际吞吐差
-- Decode 跟带宽走
-- 最大可行 TP
+- 软件如何 batch
+- 机房如何供电组网
 
-### 集群与物理底座
+### 对上层的约束语言
 
-#### 组网与调度
+- 算力天花板
+- 带宽天花板
+- 单机最大可行 TP
 
-- IB / RoCE
-- 机柜 / NVSwitch 域
-- K8s 或自研调度
-- MIG / 独占 / 共享
+## 集群与物理底座
 
-#### 物理与供应
+### 本层只回答
 
-- 功耗墙与降频
-- Xid / ECC
-- 卡型库存与成本地板
+- 这些 GPU 机器如何组网、调度、供电，以及供应是否跟得上
 
-#### 可调度原语
+### 管什么
+
+- IB / RoCE、机柜、NVSwitch 域
+- 调度与隔离：独占、共享、MIG
+- 功耗墙、降频、Xid、ECC
+- 库存与成本地板
+
+### 不管什么
+
+- 单个 ModelRequest 的语义
+- 某个 Attention kernel 的实现
+
+### 向上可暴露的调度原语
 
 - 算力单元
 - 带宽单元
 - 显存单元
 - 拓扑单元
-- 并行可行性集合
+- 允许的并行组合
 
-## 跨层因果
+## 层间对照
 
-### TTFT 差 TPOT 尚可
+### 容易混的两对
 
-- 引擎 admission / chunked
-- Prefill 池不足
-- Attention 算力
+#### 部署拓扑 vs 角色路由
 
-### TPOT 抖尾延迟差
+- 拓扑：有哪些实例
+- 路由：这条请求进哪个角色实例
 
-- 大 prefill 抢 decode
-- 未拆 P/D
-- CUDA Graph miss
+#### 卡间并行 vs 实例间传输
 
-### 吞吐低利用率虚高
+- 卡间并行：一个副本内多卡算同一个 forward
+- 实例间传输：不同副本之间搬 KV
 
-- HBM 带宽打满
-- TP 通信打满
+### 可选层
 
-### 显存总不够
+- 角色路由中的 P/D 分离：可选
+- 实例间传输：随 P/D 分离出现
 
-- KV 分页碎片
-- 前缀未共享
-- 精度与并发估错
+## 排障从哪一层看
 
-### 扩卡更慢
+### TTFT 差
 
-- 舰队 / P-D 规划错
-- 跨节点并行
-- KV 传输成瓶颈
+- 服务接入排队
+- 角色路由 Prefill 不足
+- 引擎批调度 admission / chunked
+- 计算图 Prefill 算力
 
-### 成本高 GPU 空
+### TPOT 差或抖动
 
-- Agent 侧路由无亲和
-- 副本过多
-- batch 喂不饱
+- 角色路由未拆 P/D 且混跑干扰
+- 引擎批调度被大 Prefill 打断
+- KV 碎片导致并发上不去
+- GPU 硬件带宽打满
+- 设备运行时 graph miss
 
-## 角色深度
+### 扩了卡更慢
 
-### 业务与 Agent 开发
+- 部署拓扑并行规划错误
+- 卡间并行跨节点通信过重
+- 实例间传输成为瓶颈
 
-- 深：业务使用 Agent、Agent 落地
-- 对服务端：只认慢 / 贵 / 满与请求语义
+### GPU 空但业务仍慢
 
-### 模型服务
-
-- 深：请求接入到 P/D 与舰队
-- 懂：引擎调度与 KV 接口
-
-### 推理引擎
-
-- 深：调度、KV、算子、并行
-- 懂：运行时与硬件约束
-
-### 资源与集群
-
-- 深：舰队、P/D、并行、KV 传输、硬件、集群底座
-- 懂：引擎调度与 KV 预算语义
-- Agent 侧：只懂负载形态与工具副作用
+- 服务接入或角色路由无亲和，缓存打不上
+- 部署拓扑副本过多、单副本喂不饱
+- Agent 侧请求形态过于碎片化
